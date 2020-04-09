@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Feb 25 09:36:12 2019
+
+@author: israelcastilloh
+"""
+
+#Limpieza de bases de datos y manejo de texto
+import pandas as pd
+import string 
+from datetime import datetime
+
+#%% Importar la tabla o base de datos
+dirty = pd.read_csv('../Data/dirty_data_v3.csv')

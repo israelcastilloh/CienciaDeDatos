@@ -1,0 +1,77 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Feb 27 19:01:30 2019
+
+@author: israelcastilloh
+"""
+
+#Instalar paqueterias 
+library(fBasics)
+library(normtest)
+library(quantmod)
+
+#Bajar la informacion de la serie de tiempo
+sim<-'TLEVISACPO.MX'
+inicio<-'2016-01-02'
+fin<-'2019-02-12'
+
+getSymbols(sim, from=inicio, to=fin)
+chartSeries(TLEVISACPO.MX, theme='white')
+precio<-TLEVISACPO.MX$TLEVISACPO.MX.Adjusted
+
+#Graficar histograma de precio 
+hist(precio, main='Hist. Precio', xlab='Precio', ylab='Densidad', freq=FALSE)
+#Dibujar una normal ajustada a los datos
+curve(dnorm(x, mean(precio), sd(precio)), add=TRUE, col='red')
+#curva de densidad del precio
+lines(density(precio), col='black')
+
+
+#estimar el rendimiento
+activo.rtn<-na.omit(diff(log(precio)))
+##Graficar histograma de rtn 
+hist(activo.rtn, main='Hist. Rend', xlab='Rend', ylab='Densidad', freq=FALSE, ylim=c(0,40))
+#Dibujar una normal ajustada a los datos
+curve(dnorm(x, mean(activo.rtn), sd(activo.rtn)), add=TRUE, col='red', ylim=c(0,40))
+#curva de densidad del precio
+lines(density(activo.rtn), col='black', ylim=c(0,40))
+
+### Pruebas de normalidad 
+basicStats(activo.rtn)
+basicStats(precio)
+
+### Jarque-Bera ###
+##HO = Hay normalidad
+##HA = No hay normalidad
+
+##ji cuadradad con 2 grados de libertad y 99% es  9.2104
+
+jb<-jb.norm.test(activo.rtn)
+jbref<-qchisq(0.99,2)
+
+if (jb > jbref):
+  print (jb)
+print("Ho rechazada. Rend. No es normal.")
+else:
+  print (jb)
+print("Ho aceptada. Rend. Es normal.")
+
+jbprec<-jb.norm.test(precio)
+if (jb > jbref):
+  print (jbprec)
+print("Ho rechazada. Dist Precio No es normal.")
+else:
+  print (jbprec)
+print("Ho aceptada. Dist Precio Es normal.")
+
+
+
+#Rendimiento promedio diario y anualizado
+rpd<-mean(activo.rtn)
+rpa<-mean(activo.rtn)*252
+
+#volatilidad diaria y anualizada
+vpd<-sqrt(var(activo.rtn))
+vpa<-sqrt(var(activo.rtn)*252)
+
